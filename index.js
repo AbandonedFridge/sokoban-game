@@ -1,6 +1,6 @@
 (() => {
 
-    var Game = new Phaser.Game(320, 320, Phaser.AUTO, "", {preload: preload, create: create})
+    const Game = new Phaser.Game(320, 320, Phaser.AUTO, "", {preload: preload, create: create})
 
     const EMPTY = 0
     const WALL = 1
@@ -28,16 +28,19 @@
         ]
     ]
 
-    var level = 0
+    let level = 0
 
-    var crates = []
+    let crates = []
 
-    var player
+    let player
 
-    var startX
-    var startY
-    var endX
-    var endY
+    let startX
+    let startY
+    let endX
+    let endY
+
+    let fixedGroup
+    let moveableGroup
 
     function preload() {
         Game.load.spritesheet("tiles", "tiles.png", TILES, TILES)
@@ -52,9 +55,8 @@
 
         Game.scale.refresh(true)
 
-        var fixedGroup = Game.add.group()
-        var moveableGroup = Game.add.group()
-        var tile
+        fixedGroup = Game.add.group()
+        moveableGroup = Game.add.group()
 
         for (let y = 0; y < Levels[level].length; y++) {
             crates[y] = []
@@ -68,7 +70,7 @@
                   || currentTile === SPOT+PLAYER
                   || currentTile === SPOT+CRATE
                   || currentTile === WALL) {
-                    tile = Game.add.sprite(tileX, tileY, "tiles", currentTile === WALL ? WALL : SPOT, fixedGroup)
+                    Game.add.sprite(tileX, tileY, "tiles", currentTile === WALL ? WALL : SPOT, fixedGroup)
                 } else 
                 
                 if (currentTile === CRATE || currentTile === SPOT+CRATE) {
@@ -82,7 +84,7 @@
                 }
 
                 if (currentTile === EMPTY || currentTile === CRATE || currentTile === PLAYER) {
-                    tile = Game.add.sprite(tileX, tileY, "tiles", EMPTY, fixedGroup)
+                    Game.add.sprite(tileX, tileY, "tiles", EMPTY, fixedGroup)
                 }
 
             }
@@ -140,7 +142,7 @@
             return false
         }
 
-        var playerTween = Game.add.tween(player)
+        let playerTween = Game.add.tween(player)
         
         playerTween.to({
             x: player.x + dX * TILES,
@@ -161,7 +163,7 @@
             return false
         }
 
-        var crateTween = Game.add.tween(crates[sY][sX])
+        let crateTween = Game.add.tween(crates[sY][sX])
         crateTween.to({
             x: (sX+dX)*TILES,
             y: (sY+dY)*TILES
