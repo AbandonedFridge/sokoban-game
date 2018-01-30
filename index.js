@@ -104,16 +104,16 @@
         endX = Game.input.worldX
         endY = Game.input.worldY
 
-        let distX = startX-endX
-        let distY = startY-endY
+        let distX = endX-startX
+        let distY = endY-startY
 
-        if (distY > 0 && distY > Math.abs(distX)*2) {
+        if (distY < 0 && distY < -(Math.abs(distX)*2)) {
             movePlayer(UP)
-        } else if (distY < 0 && distY < -(Math.abs(distX)*2)) {
+        } else if (distY > 0 && distY > Math.abs(distX)*2) {
             movePlayer(DOWN)
-        } else if (distX > 0 && distX > Math.abs(distY)*2) {
-            movePlayer(LEFT)
         } else if (distX < 0 && distX < -(Math.abs(distY)*2)) {
+            movePlayer(LEFT)
+        } else if (distX > 0 && distX > Math.abs(distY)*2) {
             movePlayer(RIGHT)
         }
 
