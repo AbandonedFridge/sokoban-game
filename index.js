@@ -55,6 +55,21 @@
 
         Game.scale.refresh(true)
 
+        drawLevel(0)
+
+        Game.input.onDown.add(startSwipe, this)
+    }
+
+    function clearLevel() {
+        crates = []
+        moveableGroup.destroy()
+        fixedGroup.destroy()
+    }
+
+    function drawLevel(levelNum) {
+        levelNum = levelNum || level
+        level = levelNum
+
         fixedGroup = Game.add.group()
         moveableGroup = Game.add.group()
 
@@ -91,8 +106,6 @@
 
             }
         }
-
-        Game.input.onDown.add(startSwipe, this)
     }
 
     function startSwipe() {
