@@ -42,6 +42,27 @@
     let fixedGroup
     let moveableGroup
 
+    let keys = {
+        "up": {
+            key: Phaser.KeyCode.UP,
+            action: () => { movePlayer(UP) }
+        },
+        "down": {
+            key: Phaser.KeyCode.DOWN,
+            action: () => { movePlayer(DOWN) }
+        },
+        "left": {
+            key: Phaser.KeyCode.LEFT,
+            action: () => { movePlayer(LEFT) }
+        },
+        "right": {
+            key: Phaser.KeyCode.RIGHT,
+            action: () => { movePlayer(RIGHT) }
+        }
+    }
+
+    let keymap = {}
+
     function preload() {
         Game.load.spritesheet("tiles", "tiles.png", TILES, TILES)
     }
@@ -58,6 +79,8 @@
         drawLevel(0)
 
         Game.input.onDown.add(startSwipe, this)
+        rebuildKeymap()
+        Game.input.keyboard.addCallbacks(this,keyDown)
     }
 
     function clearLevel() {
@@ -134,6 +157,29 @@
 
         Game.input.onUp.remove(endSwipe)
         Game.input.onDown.add(startSwipe)
+    }
+
+    function rebuildKeymap() {
+
+        keymap = {}
+        for (let k in keys) {
+            if (!keys.hasOwnProperty(k)) {
+                continue
+            }
+
+            keymap[keys[k].key] = keys[k].action
+        }
+
+    }
+
+    function keyDown(e) {
+
+        if (!keymap.hasOwnProperty(e.keyCode)) {
+            return
+        }
+
+        keymap[e.keyCode]()
+
     }
 
     function isClear(x, y) {
