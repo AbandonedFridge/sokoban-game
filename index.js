@@ -75,12 +75,14 @@
                 
                 if (currentTile === CRATE || currentTile === SPOT+CRATE) {
                     crates[y][x] = Game.add.sprite(tileX, tileY, "tiles", currentTile, moveableGroup)
+                    crates[y][x].isMoving = false
                 }
 
                 if (currentTile === PLAYER || currentTile === SPOT+PLAYER) {
                     player = Game.add.sprite(tileX, tileY, "tiles", currentTile, moveableGroup)
                     player.posX = x
                     player.posY = y
+                    player.isMoving = false
                 }
 
                 if (currentTile === EMPTY || currentTile === CRATE || currentTile === PLAYER) {
@@ -138,10 +140,11 @@
                 return false
             }
         }
-        if (!isClear(player.posX+dX,player.posY+dY)) {
+        if (!isClear(player.posX+dX,player.posY+dY) || player.isMoving) {
             return false
         }
 
+        player.isMoving = true
         let playerTween = Game.add.tween(player)
         
         playerTween.to({
@@ -156,14 +159,17 @@
         
         playerTween.onComplete.add(function() {
             player.frame = Levels[level][player.posY][player.posX]
+            player.isMoving = false
         })
         
     }
 
     function moveCrate(sX, sY, dX, dY) {
-        if (!isClear(sX+dX,sY+dY)) {
+        if (!isClear(sX+dX,sY+dY) || crates[sY][sX].isMoving) {
             return false
         }
+
+        crates[sY][sX].isMoving = true
 
         let crateTween = Game.add.tween(crates[sY][sX])
         crateTween.to({
@@ -179,6 +185,7 @@
 
         crateTween.onComplete.add(function() {
             crates[sY+dY][sX+dX].frame = Levels[level][sY+dY][sX+dX]
+            crates[sY+dY][sX+dX].isMoving = false
         })
     }
 
