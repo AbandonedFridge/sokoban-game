@@ -154,7 +154,9 @@
         player.posY += dY
         Levels[level][player.posY][player.posX] += PLAYER
         
-        player.frame = Levels[level][player.posY][player.posX]
+        playerTween.onComplete.add(function() {
+            player.frame = Levels[level][player.posY][player.posX]
+        })
         
     }
 
@@ -173,9 +175,11 @@
         Levels[level][sY+dY][sX+dX] += CRATE
 
         crates[sY+dY][sX+dX] = crates[sY][sX]
-        crates[sY][sX].frame = Levels[level][sY+dY][sX+dX]
         crates[sY][sX] = null
 
+        crateTween.onComplete.add(function() {
+            crates[sY+dY][sX+dX].frame = Levels[level][sY+dY][sX+dX]
+        })
     }
 
 })()
