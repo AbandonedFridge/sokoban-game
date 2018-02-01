@@ -58,10 +58,16 @@
         "right": {
             key: Phaser.KeyCode.RIGHT,
             action: () => { movePlayer(RIGHT) }
+        },
+        "undo": {
+            key: Phaser.KeyCode.U,
+            action: () => { undoMove() }
         }
     }
 
     let keymap = {}
+
+    let undoStack = []
 
     function preload() {
         Game.load.spritesheet("tiles", "tiles.png", TILES, TILES)
@@ -92,6 +98,8 @@
     function drawLevel(levelNum) {
         levelNum = levelNum || level
         level = levelNum
+
+        undoStack.length = 0
 
         fixedGroup = Game.add.group()
         moveableGroup = Game.add.group()
@@ -190,11 +198,13 @@
         return Levels[level][y][x] === CRATE || Levels[level][y][x] === CRATE+SPOT
     }
 
-    function movePlayer(deltas) {
+    function movePlayer(deltas, logMove) {
+        logMove = logMove === false ? false : true
         let dX = deltas[0]
         let dY = deltas[1]
+        let crateMoved = null
         if (isCrate(player.posX+dX,player.posY+dY)) {
-            let crateMoved = moveCrate(player.posX+dX, player.posY+dY, dX,dY)
+            crateMoved = moveCrate(player.posX+dX, player.posY+dY, dX,dY)
             if (crateMoved === false) {
                 return false
             }
@@ -220,6 +230,10 @@
             player.frame = Levels[level][player.posY][player.posX]
             player.isMoving = false
         })
+
+        if (logMove) {
+            undoStack.push({dX:-dX, dY:-dY, crate: crateMoved})
+        }
         
     }
 
@@ -246,6 +260,19 @@
             crates[sY+dY][sX+dX].frame = Levels[level][sY+dY][sX+dX]
             crates[sY+dY][sX+dX].isMoving = false
         })
+        return {x: sX+dX, y: sY+dY, dX: -dX, dY: -dY}
+    }
+
+    function undoMove() {
+        if (undoStack.length === 0) {
+            return
+        }
+
+        let move = undoStack.pop()
+        movePlayer([move.dX, move.dY], false)
+        if (move.crate) {
+            moveCrate(move.crate.x, move.crate.y, move.crate.dX, move.crate.dY)
+        }
     }
 
 })()
