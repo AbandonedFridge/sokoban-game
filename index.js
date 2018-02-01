@@ -264,7 +264,7 @@
     }
 
     function undoMove() {
-        if (undoStack.length === 0) {
+        if (undoStack.length === 0 || player.isMoving) {
             return
         }
 
