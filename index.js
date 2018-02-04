@@ -223,6 +223,8 @@
             return false
         }
 
+        moves++
+
         player.isMoving = true
         let playerTween = Game.add.tween(player)
         
