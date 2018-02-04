@@ -260,6 +260,15 @@
             y: (sY+dY)*TILES
         }, 100, Phaser.Easing.Linear.None, true)
 
+        if (Levels[level][sY][sX] === SPOT+CRATE) {
+            cratesOnSpots--
+        }
+
+        if (Levels[level][sY+dY][sX+dX] === SPOT
+         || Levels[level][sY+dY][sX+dX] === SPOT+PLAYER) {
+            cratesOnSpots++
+        }
+
         Levels[level][sY][sX] -= CRATE
         Levels[level][sY+dY][sX+dX] += CRATE
 
