@@ -42,6 +42,10 @@
     let fixedGroup
     let moveableGroup
 
+    let moves = 0
+    let crateCount = 0
+    let cratesOnSpots = 0
+
     let keys = {
         "up": {
             key: Phaser.KeyCode.UP,
@@ -90,7 +94,10 @@
     }
 
     function clearLevel() {
+        undoStack.length = 0
         crates = []
+        crateCount = 0
+        cratesOnSpots = 0
         moveableGroup.destroy()
         fixedGroup.destroy()
     }
@@ -99,7 +106,7 @@
         levelNum = levelNum || level
         level = levelNum
 
-        undoStack.length = 0
+        clearLevel()
 
         fixedGroup = Game.add.group()
         moveableGroup = Game.add.group()
@@ -122,6 +129,7 @@
                 if (currentTile === CRATE || currentTile === SPOT+CRATE) {
                     crates[y][x] = Game.add.sprite(tileX, tileY, "tiles", currentTile, moveableGroup)
                     crates[y][x].isMoving = false
+                    crateCount++
                 }
 
                 if (currentTile === PLAYER || currentTile === SPOT+PLAYER) {
