@@ -42,6 +42,9 @@
     let fixedGroup
     let moveableGroup
 
+    let levelText
+    let scoreText
+
     let moves = 0
     let crateCount = 0
     let cratesOnSpots = 0
@@ -87,6 +90,7 @@
         Game.scale.refresh(true)
 
         drawLevel(0)
+        drawOverlay()
 
         Game.input.onDown.add(startSwipe, this)
         rebuildKeymap()
@@ -147,6 +151,41 @@
 
             }
         }
+    }
+
+    function drawOverlay() {
+        if (levelText) {
+            levelText.destroy()
+        }
+        levelText = Game.add.text(
+            Game.width/2,
+            0,
+            `Level ${level+1}`,
+            {
+                font: "bold 24px Helvetica",
+                fill: "#ffffff"
+            }
+        )
+        levelText.anchor.x = 0.5
+
+        if (scoreText) {
+            scoreText.destroy()
+        }
+        scoreText = Game.add.text(
+            Game.width/2,
+            Game.height,
+            `Moves: ${moves}`,
+            {
+                font: "bold 24px Helvetica",
+                fill: "#ffffff"
+            }
+        )
+        scoreText.anchor.x = 0.5
+        scoreText.anchor.y = 1
+    }
+
+    function updateScore() {
+        scoreText.text = `Moves: ${moves}`
     }
 
     function startSwipe() {
@@ -224,6 +263,7 @@
         }
 
         moves++
+        updateScore()
 
         player.isMoving = true
         let playerTween = Game.add.tween(player)
@@ -270,7 +310,7 @@
          || Levels[level][sY+dY][sX+dX] === SPOT+PLAYER) {
             cratesOnSpots++
         }
-
+        
         Levels[level][sY][sX] -= CRATE
         Levels[level][sY+dY][sX+dX] += CRATE
 
