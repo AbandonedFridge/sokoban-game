@@ -98,8 +98,10 @@
         crates = []
         crateCount = 0
         cratesOnSpots = 0
-        moveableGroup.destroy()
-        fixedGroup.destroy()
+        if (moveableGroup && moveableGroup.destroy) {
+            moveableGroup.destroy()
+            fixedGroup.destroy()
+        }
     }
 
     function drawLevel(levelNum) {
