@@ -1,6 +1,16 @@
 (() => {
 
-    const Game = new Phaser.Game(320, 320, Phaser.AUTO, "", {preload: preload, create: create})
+    const Game = new Phaser.Game({
+        width: "100%",
+        height: "100%",
+        renderer: Phaser.AUTO,
+        antialias: false,
+        state: {
+            preload: preload,
+            create: create,
+            resize: resize
+        }
+    })
 
     const EMPTY = 0
     const WALL = 1
@@ -13,7 +23,6 @@
     const LEFT = [-1, 0]
     const RIGHT = [1, 0]
 
-    const TILES = 40
 
     const Levels = [
         [
@@ -33,6 +42,9 @@
     let crates = []
 
     let player
+
+    let tileSize = 40
+    let gameScale = 1
 
     let startX
     let startY
@@ -77,15 +89,16 @@
     let undoStack = []
 
     function preload() {
-        Game.load.spritesheet("tiles", "tiles.png", TILES, TILES)
+        Game.load.spritesheet("tiles", "tiles.png", tileSize, tileSize)
     }
 
     function create() {
 
+        Game.stage.backgroundColor = "#555555"
         Game.scale.pageAlignHorizontally = true
         Game.scale.pageAlignVertically = true
 
-        Game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL
+        Game.scale.scaleMode = Phaser.ScaleManager.RESIZE
 
         Game.scale.refresh(true)
 
@@ -95,11 +108,31 @@
         Game.input.onDown.add(startSwipe, this)
         rebuildKeymap()
         Game.input.keyboard.addCallbacks(this,keyDown)
+
+        resize()
+    }
+
+    function resize() {
+        gameScale = Game.width < Game.height
+            ? Game.width/320
+            : Game.height/320
+        let playMin = Game.width < Game.height ? Game.width : Game.height
+        fixedGroup.scale.setTo(gameScale, gameScale)
+        fixedGroup.x = Math.round((Game.width-playMin)/2)
+        fixedGroup.y = Math.round((Game.height-playMin)/2)
+        moveableGroup.scale.setTo(gameScale, gameScale)
+        moveableGroup.x = Math.round((Game.width-playMin)/2)
+        moveableGroup.y = Math.round((Game.height-playMin)/2)
+        levelText.x = Math.round((Game.width/2))
+        levelText.fontSize = 24*gameScale
+        scoreText.x = Math.round((Game.width/2))
+        scoreText.y = Game.height
+        scoreText.fontSize = 24*gameScale
     }
 
     function clearLevel() {
         undoStack.length = 0
-        crates = []
+        crates.length = 0
         crateCount = 0
         cratesOnSpots = 0
         if (moveableGroup && moveableGroup.destroy) {
@@ -122,8 +155,8 @@
             for (let x = 0; x < Levels[level][y].length; x++) {
                 crates[y][x] = null
                 let currentTile = Levels[level][y][x]
-                let tileX = x * TILES
-                let tileY = y * TILES
+                let tileX = x * tileSize
+                let tileY = y * tileSize
 
                 if ( currentTile === SPOT
                   || currentTile === SPOT+PLAYER
@@ -186,6 +219,10 @@
 
     function updateScore() {
         scoreText.text = `Moves: ${moves}`
+    }
+
+    function updateLevel() {
+        levelText.text = `Level ${level+1}`
     }
 
     function startSwipe() {
@@ -269,8 +306,8 @@
         let playerTween = Game.add.tween(player)
         
         playerTween.to({
-            x: player.x + dX * TILES,
-            y: player.y + dY * TILES
+            x: player.x + dX * tileSize,
+            y: player.y + dY * tileSize
         }, 100, Phaser.Easing.Linear.None, true)
 
         Levels[level][player.posY][player.posX] -= PLAYER
@@ -298,8 +335,8 @@
 
         let crateTween = Game.add.tween(crates[sY][sX])
         crateTween.to({
-            x: (sX+dX)*TILES,
-            y: (sY+dY)*TILES
+            x: (sX+dX)*tileSize,
+            y: (sY+dY)*tileSize
         }, 100, Phaser.Easing.Linear.None, true)
 
         if (Levels[level][sY][sX] === SPOT+CRATE) {
