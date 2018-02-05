@@ -8,7 +8,8 @@
         state: {
             preload: preload,
             create: create,
-            resize: resize
+            resize: resize,
+            render: render
         }
     })
 
@@ -94,6 +95,8 @@
 
     function create() {
 
+        Game.time.advancedTiming = true
+
         Game.stage.backgroundColor = "#555555"
         Game.scale.pageAlignHorizontally = true
         Game.scale.pageAlignVertically = true
@@ -128,6 +131,12 @@
         scoreText.x = Math.round((Game.width/2))
         scoreText.y = Game.height
         scoreText.fontSize = 24*gameScale
+    }
+
+    function render() {
+        if (location.hash === "#debug") {
+            Game.debug.text(Game.time.fps, 2, 14, "#00ff00");
+        }
     }
 
     function clearLevel() {
