@@ -1,6 +1,6 @@
-(() => {
+(function() {
 
-    const Game = new Phaser.Game({
+    var Game = new Phaser.Game({
         width: "100%",
         height: "100%",
         renderer: Phaser.AUTO,
@@ -13,19 +13,19 @@
         }
     })
 
-    const EMPTY = 0
-    const WALL = 1
-    const SPOT = 2
-    const CRATE = 3
-    const PLAYER = 4
+    var EMPTY = 0
+    var WALL = 1
+    var SPOT = 2
+    var CRATE = 3
+    var PLAYER = 4
 
-    const UP = [0, -1]
-    const DOWN = [0, 1]
-    const LEFT = [-1, 0]
-    const RIGHT = [1, 0]
+    var UP = [0, -1]
+    var DOWN = [0, 1]
+    var LEFT = [-1, 0]
+    var RIGHT = [1, 0]
 
 
-    const Levels = [
+    var Levels = [
         [
             [WALL,WALL,WALL,WALL,WALL,WALL,WALL,WALL],
             [WALL,EMPTY,EMPTY,WALL,WALL,WALL,WALL,WALL],
@@ -38,56 +38,56 @@
         ]
     ]
 
-    let level = 0
+    var level = 0
 
-    let crates = []
+    var crates = []
 
-    let player
+    var player
 
-    let tileSize = 40
-    let gameScale = 1
+    var tileSize = 40
+    var gameScale = 1
 
-    let startX
-    let startY
-    let endX
-    let endY
+    var startX
+    var startY
+    var endX
+    var endY
 
-    let fixedGroup
-    let moveableGroup
+    var fixedGroup
+    var moveableGroup
 
-    let levelText
-    let scoreText
+    var levelText
+    var scoreText
 
-    let moves = 0
-    let crateCount = 0
-    let cratesOnSpots = 0
+    var moves = 0
+    var crateCount = 0
+    var cratesOnSpots = 0
 
-    let keys = {
+    var keys = {
         "up": {
             key: Phaser.KeyCode.UP,
-            action: () => { movePlayer(UP) }
+            action: function() { movePlayer(UP) }
         },
         "down": {
             key: Phaser.KeyCode.DOWN,
-            action: () => { movePlayer(DOWN) }
+            action: function() { movePlayer(DOWN) }
         },
         "left": {
             key: Phaser.KeyCode.LEFT,
-            action: () => { movePlayer(LEFT) }
+            action: function() { movePlayer(LEFT) }
         },
         "right": {
             key: Phaser.KeyCode.RIGHT,
-            action: () => { movePlayer(RIGHT) }
+            action: function() { movePlayer(RIGHT) }
         },
         "undo": {
             key: Phaser.KeyCode.U,
-            action: () => { undoMove() }
+            action: function() { undoMove() }
         }
     }
 
-    let keymap = {}
+    var keymap = {}
 
-    let undoStack = []
+    var undoStack = []
 
     function preload() {
         Game.load.spritesheet("tiles", "tiles.png", tileSize, tileSize)
@@ -119,7 +119,7 @@
         gameScale = Game.width < Game.height
             ? Game.width/320
             : Game.height/320
-        let playMin = Game.width < Game.height ? Game.width : Game.height
+        var playMin = Game.width < Game.height ? Game.width : Game.height
         fixedGroup.scale.setTo(gameScale, gameScale)
         fixedGroup.x = Math.round((Game.width-playMin)/2)
         fixedGroup.y = Math.round((Game.height-playMin)/2)
@@ -159,13 +159,13 @@
         fixedGroup = Game.add.group()
         moveableGroup = Game.add.group()
 
-        for (let y = 0; y < Levels[level].length; y++) {
+        for (var y = 0; y < Levels[level].length; y++) {
             crates[y] = []
-            for (let x = 0; x < Levels[level][y].length; x++) {
+            for (var x = 0; x < Levels[level][y].length; x++) {
                 crates[y][x] = null
-                let currentTile = Levels[level][y][x]
-                let tileX = x * tileSize
-                let tileY = y * tileSize
+                var currentTile = Levels[level][y][x]
+                var tileX = x * tileSize
+                var tileY = y * tileSize
 
                 if ( currentTile === SPOT
                   || currentTile === SPOT+PLAYER
@@ -202,7 +202,7 @@
         levelText = Game.add.text(
             Game.width/2,
             0,
-            `Level ${level+1}`,
+            "Level " + (level+1),
             {
                 font: "bold 24px Helvetica",
                 fill: "#ffffff"
@@ -216,7 +216,7 @@
         scoreText = Game.add.text(
             Game.width/2,
             Game.height,
-            `Moves: ${moves}`,
+            "Moves: " + moves,
             {
                 font: "bold 24px Helvetica",
                 fill: "#ffffff"
@@ -227,11 +227,11 @@
     }
 
     function updateScore() {
-        scoreText.text = `Moves: ${moves}`
+        scoreText.text = "Moves: " + moves
     }
 
     function updateLevel() {
-        levelText.text = `Level ${level+1}`
+        levelText.text = "Level " + (level+1)
     }
 
     function startSwipe() {
@@ -245,8 +245,8 @@
         endX = Game.input.worldX
         endY = Game.input.worldY
 
-        let distX = endX-startX
-        let distY = endY-startY
+        var distX = endX-startX
+        var distY = endY-startY
 
         if (distY < 0 && distY < -(Math.abs(distX)*2)) {
             movePlayer(UP)
@@ -265,7 +265,7 @@
     function rebuildKeymap() {
 
         keymap = {}
-        for (let k in keys) {
+        for (var k in keys) {
             if (!keys.hasOwnProperty(k)) {
                 continue
             }
@@ -295,9 +295,9 @@
 
     function movePlayer(deltas, logMove) {
         logMove = logMove === false ? false : true
-        let dX = deltas[0]
-        let dY = deltas[1]
-        let crateMoved = null
+        var dX = deltas[0]
+        var dY = deltas[1]
+        var crateMoved = null
         if (isCrate(player.posX+dX,player.posY+dY)) {
             crateMoved = moveCrate(player.posX+dX, player.posY+dY, dX,dY)
             if (crateMoved === false) {
@@ -312,7 +312,7 @@
         updateScore()
 
         player.isMoving = true
-        let playerTween = Game.add.tween(player)
+        var playerTween = Game.add.tween(player)
         
         playerTween.to({
             x: player.x + dX * tileSize,
@@ -342,7 +342,7 @@
 
         crates[sY][sX].isMoving = true
 
-        let crateTween = Game.add.tween(crates[sY][sX])
+        var crateTween = Game.add.tween(crates[sY][sX])
         crateTween.to({
             x: (sX+dX)*tileSize,
             y: (sY+dY)*tileSize
@@ -375,7 +375,7 @@
             return
         }
 
-        let move = undoStack.pop()
+        var move = undoStack.pop()
         movePlayer([move.dX, move.dY], false)
         if (move.crate) {
             moveCrate(move.crate.x, move.crate.y, move.crate.dX, move.crate.dY)

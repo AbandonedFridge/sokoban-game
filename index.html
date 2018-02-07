@@ -2,16 +2,57 @@
 <html>
     <head>
         <title>My Awesome Knockoff Sokoban Game</title>
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
         <style type="text/css">
             html,body,div {
                 padding: 0px;
                 margin: 0px;
             }
         </style>
+        <script src="cordova.js"></script>
     </head>
     <body>
-        <div id=game></div>
-        <script type=application/javascript src=phaser.min.js></script>
-        <script type=application/javascript src=index.js></script>
+        <script>
+        (function(){
+            var onDeviceReady = function() {
+                setTimeout(function() {
+                    navigator.splashscreen.hide()
+                }, 5000, false)
+                function inc(path, callback) {
+                    var node = document.createElement("script")
+                    var successHandler = function () {
+                        this.removeEventListener("load", successHandler)
+                        this.removeEventListener("error", errorHandler)
+                        if (callback) {
+                            setTimeout(function() { callback() }, 1)
+                        }
+                    }
+                    var errorHandler = function( err ) {
+                        this.removeEventListener("load", successHandler)
+                        this.removeEventListener("error", errorHandler)
+                        if (callback) {
+                            setTimeout(function() { callback() }, 1)
+                        }
+                    }
+
+                    node.addEventListener("load", successHandler)
+                    node.addEventListener("error", errorHandler)
+
+                    node.src = path
+
+                    document.body.appendChild(node)
+                }
+
+                inc("phaser.min.js", function(){
+                    inc("index.js")
+                })
+            }
+            if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/)) {
+                document.addEventListener("deviceready", onDeviceReady, false);
+            } else {
+                onDeviceReady();
+            }
+        })()
+        </script>
     </body>
 </html>
