@@ -26,7 +26,7 @@ App.play.prototype.resize = function() {
 
     App.gameScale = this.game.width < this.game.height
         ? this.game.width/(8*TILES)
-        : this.game.width/(8*TILES)
+        : this.game.height/(8*TILES)
     
     App.playMin = this.game.width < this.game.height
         ? this.game.width
