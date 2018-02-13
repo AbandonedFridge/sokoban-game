@@ -2,7 +2,7 @@ App.boot = function (game) {}
 
 App.boot.prototype.preload = function () {
     console.log(
-        "%c %c %c Booting By Awesome Sokoban Knockoff...          %c %c ",
+        "%c %c %c Booting My Awesome Sokoban Knockoff...          %c %c ",
         "background: #ffb740;",
         "background: #ff9620;",
         "color: #fff; background: #ee7600;",
