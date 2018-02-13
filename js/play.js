@@ -36,6 +36,7 @@ App.play.prototype.resize = function() {
 
     this.fixedGroup.scale.setTo(App.gameScale, App.gameScale)
     this.moveableGroup.scale.setTo(App.gameScale, App.gameScalea)
+    this.undoButton.scale.setTo(App.gameScale, App.gameScale)
 
     this.fixedGroup.x =
     this.moveableGroup.x = Math.round((this.game.width-App.playMin)/2)
@@ -48,6 +49,8 @@ App.play.prototype.resize = function() {
     this.levelText.x =
     this.scoreText.x = this.game.width/2
     this.scoreText.y = this.game.height
+
+    this.undoButton.y = this.game.height
 
 }
 
@@ -145,6 +148,15 @@ App.play.prototype.drawOverlay = function () {
         this.overlayGroup
     )
     this.scoreText.anchor.setTo(0.5, 1)
+
+    this.undoButton = this.game.add.button(
+        0,
+        this.game.height,
+        "undo",
+        this.undoMove,
+        this
+    )
+    this.undoButton.anchor.setTo(0, 1)
 }
 
 App.play.prototype.isClear = function (x, y) {

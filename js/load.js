@@ -23,7 +23,8 @@ App.load.prototype.preload = function () {
 
     this.loadText.anchor.setTo(0.5, 0.5)
 
-    this.game.load.spritesheet("tiles", "tiles.png", TILES, TILES)
+    this.game.load.spritesheet("tiles", "assets/tiles.png", TILES, TILES)
+    this.game.load.image("undo", "assets/undo.png")
     this.game.load.json("levels", "js/levels.json")
 
 }
