@@ -10,49 +10,64 @@
             }
         </style>
         <script src="cordova.js"></script>
-    </head>
-    <body>
+        <script src="js/phaser.js"></script>
+
+
         <script>
-        (function(){
-            var onDeviceReady = function() {
-                setTimeout(function() {
-                    navigator.splashscreen.hide()
-                }, 5000, false)
-                function inc(path, callback) {
-                    var node = document.createElement("script")
-                    var successHandler = function () {
-                        this.removeEventListener("load", successHandler)
-                        this.removeEventListener("error", errorHandler)
-                        if (callback) {
-                            setTimeout(function() { callback() }, 1)
-                        }
-                    }
-                    var errorHandler = function( err ) {
-                        this.removeEventListener("load", successHandler)
-                        this.removeEventListener("error", errorHandler)
-                        if (callback) {
-                            setTimeout(function() { callback() }, 1)
-                        }
-                    }
+            // Constants
+            var EMPTY = 0
+            var WALL = 1
+            var SPOT = 2
+            var CRATE = 3
+            var PLAYER = 4
 
-                    node.addEventListener("load", successHandler)
-                    node.addEventListener("error", errorHandler)
+            var UP = [0, -1]
+            var DOWN = [0, 1]
+            var LEFT = [-1, 0]
+            var RIGHT = [1, 0]
 
-                    node.src = path
+            var TILES = 40
 
-                    document.body.appendChild(node)
+            // Start app namespace
+            var App = {
+                debug: true
+            }
+
+            // Let's get started
+            ;(function(){
+                var onDeviceReady = function() {
+                    setTimeout(function() {
+                        navigator.splashscreen.hide()
+                    }, 5000, false)
                 }
 
-                inc("phaser.min.js", function(){
-                    inc("index.js")
-                })
-            }
-            if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/)) {
-                document.addEventListener("deviceready", onDeviceReady, false);
-            } else {
-                onDeviceReady();
-            }
-        })()
+                if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/)) {
+                    document.addEventListener("deviceready", onDeviceReady, false);
+                }
+            })()
         </script>
-    </body>
+
+        <script src="js/boot.js"></script>
+        <script src="js/load.js"></script>
+        <script src="js/menu.js"></script>
+        <script src="js/play.js"></script>
+        <script src="js/input.js"></script>
+
+        <script>
+            ;(function(){
+                App.game = new Phaser.Game({
+                    width:"100%",
+                    height: " 100%",
+                    antialias: false
+                })
+
+                App.game.state.add("boot", App.boot)
+                App.game.state.add("load", App.load)
+                App.game.state.add("menu", App.menu)
+                App.game.state.add("play", App.play)
+                App.game.state.start("boot")
+            })()
+        </script>
+    </head>
+    <body></body>
 </html>
