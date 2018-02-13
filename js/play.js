@@ -11,6 +11,8 @@ App.play.prototype.create = function() {
         "background: #ffb740;"
     )
 
+    this.game.stage.backgroundColor = "#555555"
+
     this.drawLevel(0)
     this.drawOverlay()
 
